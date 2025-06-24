@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ action }} une activité</h1>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    <p>
+        {{ form.date.label }}<br>
+        {{ form.date(size=20) }}<br>
+        {% for error in form.date.errors %}
+            <span style="color:red;">{{ error }}</span>
+        {% endfor %}
+    </p>
+
+    <p>
+        {{ form.structure.label }}<br>
+        {{ form.structure(size=40) }}<br>
+        {% for error in form.structure.errors %}
+            <span style="color:red;">{{ error }}</span>
+        {% endfor %}
+    </p>
+
+    <p>
+        {{ form.description.label }}<br>
+        {{ form.description(rows=4, cols=40) }}<br>
+        {% for error in form.description.errors %}
+            <span style="color:red;">{{ error }}</span>
+        {% endfor %}
+    </p>
+
+    <p>
+        {{ form.equipment.label }}<br>
+        {{ form.equipment(size=40) }}<br>
+        {% for error in form.equipment.errors %}
+            <span style="color:red;">{{ error }}</span>
+        {% endfor %}
+    </p>
+
+    <p>{{ form.submit() }}</p>
+</form>
+
+<a href="{{ url_for('activites.list_activites') }}">Retour à la liste</a>
+{% endblock %}

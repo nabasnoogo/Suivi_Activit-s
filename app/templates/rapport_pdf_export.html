@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapport des Activités (PDF)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            margin: 30px;
+            color: #333;
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        p.description {
+            text-align: center;
+            font-size: 11px;
+            margin-bottom: 25px;
+            color: #555;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+        th, td {
+            border: 1px solid #444;
+            padding: 5px;
+            text-align: left;
+        }
+        th {
+            background-color: #cce5ff;
+            color: #000;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <!-- Titre du rapport -->
+<h2 style="text-align:center; color:#2c3e50; margin-bottom:10px;">
+    {{ titre_rapport }}
+</h2>
+
+
+    <!-- Tableau des activités -->
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Date</th>
+                <th>Structure</th>
+                <th>Acteurs</th>
+                <th>Type</th>
+                <th>Équipement</th>
+                <th>État</th>
+                <th>Commentaire</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for activite in activites %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ activite.date.strftime('%d/%m/%Y') if activite.date else '' }}</td>
+                <td>{{ activite.structure }}</td>
+                <td>{{ activite.acteurs }}</td>
+                <td>{{ activite.type_activite }}</td>
+                <td>{{ activite.equipement or '' }}</td>
+                <td>
+                    {% if activite.etat == 'planifie' %}Planifié
+                    {% elif activite.etat == 'en_cours' %}En cours
+                    {% else %}Terminé
+                    {% endif %}
+                </td>
+                <td>{{ activite.commentaire or '' }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="8" style="text-align:center;">Aucune activité trouvée.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

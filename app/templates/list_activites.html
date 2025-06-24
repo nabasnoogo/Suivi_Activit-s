@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Liste des Activités{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">📋 Liste des Activités</h2>
+
+    <div class="mb-3">
+        <a href="{{ url_for('activites.add_activite') }}" class="btn btn-primary">➕ Ajouter une activité</a>
+        <a href="{{ url_for('activites.rapport_pdf') }}" class="btn btn-success">📄 Rapport & PDF</a>
+    </div>
+
+    <!-- Conteneur responsive pour la table -->
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Structure</th>
+                    <th class="d-none d-md-table-cell">Acteurs</th>
+                    <th class="d-none d-md-table-cell">Type</th>
+                    <th class="d-none d-lg-table-cell">Équipement</th>
+                    <th>État</th>
+                    <th>Date</th>
+                    <th class="d-none d-lg-table-cell">Fichier</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for activite in activites %}
+                <tr>
+                    <td>{{ activite.id }}</td>
+                    <td>{{ activite.structure }}</td>
+                    <td class="d-none d-md-table-cell">{{ activite.acteurs }}</td>
+                    <td class="d-none d-md-table-cell">{{ activite.type_activite }}</td>
+                    <td class="d-none d-lg-table-cell">{{ activite.equipement or '' }}</td>
+                    <td>
+                        {% if activite.etat == 'planifie' %}
+                            <span class="badge bg-info">Planifié</span>
+                        {% elif activite.etat == 'en_cours' %}
+                            <span class="badge bg-warning text-dark">En cours</span>
+                        {% else %}
+                            <span class="badge bg-success">Terminé</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ activite.date.strftime('%d/%m/%Y') if activite.date else '' }}</td>
+                    <td class="d-none d-lg-table-cell">
+                        {% if activite.fichier %}
+                            <a href="{{ url_for('static', filename='uploads/' + activite.fichier) }}" target="_blank">📎 Voir</a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('activites.edit_activite', id=activite.id) }}" class="btn btn-sm btn-warning" title="Modifier">✏️</a>
+                        <form method="POST" action="{{ url_for('activites.delete_activite', id=activite.id) }}" class="d-inline" onsubmit="return confirm('Supprimer cette activité ?');">
+                            <button type="submit" class="btn btn-sm btn-danger" title="Supprimer">🗑️</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="9" class="text-center">Aucune activité enregistrée.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="container">
+    <h2>Confirmation requise</h2>
+    <p>Vous devez confirmer votre adresse e-mail avant de pouvoir accéder à l'application.</p>
+    <p>Veuillez vérifier votre boîte de réception pour le lien de confirmation.</p>
+    <a href="{{ url_for('auth.logout') }}">Se déconnecter</a>
+  </div>
+{% endblock %}

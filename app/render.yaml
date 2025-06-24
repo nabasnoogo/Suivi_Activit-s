@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: suivi-activites                # ← Tu peux changer le nom du projet si tu veux
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn run:app"     # ← Ton point d’entrée doit rester ça
+
+    envVars:
+      - key: FLASK_ENV
+        value: production
+
+      - key: SECRET_KEY
+        value: change-moi-123456         # ← Mets une clé secrète (au hasard)
+
+      - key: SECURITY_PASSWORD_SALT
+        value: sel-unique-456789         # ← Mets un autre mot secret ici
+
+      - key: MAIL_USERNAME
+        value: nabasnak7@gmail.com       # ← Ton adresse Gmail (celle que tu utilises dans l'app)
+
+      - key: MAIL_PASSWORD
+        value: "qaat fwoc dvvt zsbj"      # ← Le mot de passe **d'application** de Gmail
+
+      - key: MAIL_DEFAULT_SENDER
+        value: nabasnak7@gmail.com       # ← Doit être identique à MAIL_USERNAME

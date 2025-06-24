@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Rapport des Activités{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <!-- Titre dynamique centré -->
+    <h2 class="text-center text-md-start mb-4">
+        {{ titre_rapport or "📄 Rapport des Activités" }}
+    </h2>
+
+    <!-- Carte de filtrage -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            🔍 <strong>Filtrer les activités</strong>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <div class="row gy-3 gx-3">
+
+                    <!-- Champ structure -->
+                    <div class="col-12 col-md-4">
+                        <label for="structure" class="form-label">Structure</label>
+                        <input type="text" name="structure" id="structure" class="form-control"
+                               placeholder="ex : DSI" value="{{ structure or '' }}">
+                    </div>
+
+                    <!-- Champ mois -->
+                    <div class="col-6 col-md-2">
+                        <label for="mois" class="form-label">Mois</label>
+                        <input type="number" name="mois" id="mois" class="form-control"
+                               min="1" max="12" value="{{ mois or '' }}">
+                    </div>
+
+                    <!-- Champ année -->
+                    <div class="col-6 col-md-2">
+                        <label for="annee" class="form-label">Année</label>
+                        <input type="number" name="annee" id="annee" class="form-control"
+                               min="2000" max="2100" value="{{ annee or '' }}">
+                    </div>
+
+                    <!-- Boutons d'action -->
+                    <div class="col-12 col-md-4 d-flex align-items-end justify-content-between">
+                        <button type="submit" name="action" value="afficher" class="btn btn-primary w-100 me-2">
+                            👁️ Afficher
+                        </button>
+                        <button type="submit" name="action" value="telecharger" class="btn btn-success w-100">
+                            📥 Télécharger
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tableau des résultats -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-secondary">
+                <tr>
+                    <th>#</th>
+                    <th>Date</th>
+                    <th>Structure</th>
+                    <th>Acteurs</th>
+                    <th>Type</th>
+                    <th>Équipement</th>
+                    <th>État</th>
+                    <th>Commentaire</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for activite in activites %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ activite.date.strftime('%d/%m/%Y') if activite.date else '' }}</td>
+                    <td>{{ activite.structure }}</td>
+                    <td>{{ activite.acteurs }}</td>
+                    <td>{{ activite.type_activite }}</td>
+                    <td>{{ activite.equipement or '' }}</td>
+                    <td>
+                        {% if activite.etat == 'planifie' %}
+                            <span class="badge bg-info text-dark">Planifié</span>
+                        {% elif activite.etat == 'en_cours' %}
+                            <span class="badge bg-warning text-dark">En cours</span>
+                        {% else %}
+                            <span class="badge bg-success">Terminé</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ activite.commentaire or '' }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-center">Aucune activité trouvée avec ces filtres.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

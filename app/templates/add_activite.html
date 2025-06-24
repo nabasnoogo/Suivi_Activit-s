@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}{{ action }} Activité{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-4">
+    <div class="col-lg-8 mx-auto">
+
+        <!-- En-tête stylisé -->
+        <h2 class="text-center mb-4" style="color: #2c3e50;">{{ action }} une activité</h2>
+
+        <!-- Carte du formulaire -->
+        <div class="p-4 rounded shadow" style="background-color: #fdfefe; border: 1px solid #dee2e6;">
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+
+                <!-- Groupe de champ -->
+                <div class="mb-3">
+                    {{ form.structure.label(class="form-label fw-semibold text-dark") }}
+                    {{ form.structure(class="form-control", placeholder="Ex : DSI") }}
+                    {% if form.structure.errors %}
+                        <div class="text-danger small">{{ form.structure.errors[0] }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.acteurs.label(class="form-label fw-semibold text-dark") }}
+                    {{ form.acteurs(class="form-control", placeholder="Ex : Nabasnoogo NAKOULMA...") }}
+                    {% if form.acteurs.errors %}
+                        <div class="text-danger small">{{ form.acteurs.errors[0] }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.type_activite.label(class="form-label fw-semibold text-dark") }}
+                    {{ form.type_activite(class="form-select", id="type_activite_select") }}
+                    {% if form.type_activite.errors %}
+                        <div class="text-danger small">{{ form.type_activite.errors[0] }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3" id="autre_type_div" style="display: none;">
+                  {{ form.autre_type.label(class="form-label fw-semibold text-dark") }}
+                    {{ form.autre_type(class="form-control", placeholder="Entrez le type d'activité") }}
+                    {% if form.autre_type.errors %}
+                        <div class="text-danger small">{{ form.autre_type.errors[0] }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.equipement.label(class="form-label fw-semibold text-dark") }}
+                    {{ form.equipement(class="form-control") }}
+                    {% if form.equipement.errors %}
+                        <div class="text-danger small">{{ form.equipement.errors[0] }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.etat.label(class="form-label fw-semibold text-dark") }}
+                    {{ form.etat(class="form-select") }}
+                    {% if form.etat.errors %}
+                        <div class="text-danger small">{{ form.etat.errors[0] }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.date.label(class="form-label fw-semibold text-dark") }}
+                    {{ form.date(class="form-control", type="date") }}
+                    {% if form.date.errors %}
+                        <div class="text-danger small">{{ form.date.errors[0] }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.commentaire.label(class="form-label fw-semibold text-dark") }}
+                    {{ form.commentaire(class="form-control", rows=4, placeholder="Détaillez ici...") }}
+                    {% if form.commentaire.errors %}
+                        <div class="text-danger small">{{ form.commentaire.errors[0] }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    {{ form.fichier.label(class="form-label fw-semibold text-dark") }}
+                    {{ form.fichier(class="form-control") }}
+                    {% if form.fichier.errors %}
+                        <div class="text-danger small">{{ form.fichier.errors[0] }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('activites.list_activites') }}" class="btn btn-outline-secondary">⬅ Annuler</a>
+                    <button type="submit" class="btn btn-primary px-4">{{ action }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Affiche ou cache le champ "autre_type" selon la sélection dans "type_activite"
+    function toggleAutreType() {
+        const select = document.getElementById('type_activite_select');
+        const autreDiv = document.getElementById('autre_type_div');
+        if (select.value === 'Autre') {
+            autreDiv.style.display = 'block';
+        } else {
+            autreDiv.style.display = 'none';
+        }
+    }
+
+    // Exécuter au chargement
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleAutreType();
+        document.getElementById('type_activite_select').addEventListener('change', toggleAutreType);
+    });
+</script>
+{% endblock %}
