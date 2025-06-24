@@ -2,6 +2,8 @@ from flask import Flask
 from .extensions import db, migrate, login_manager, mail
 from .routes.activites import activites_bp  # Blueprint activités
 from .routes.auth_routes import auth  # Blueprint auth
+from .routes.main import main_bp
+
 
 def create_app():
     app = Flask(__name__)
@@ -21,6 +23,7 @@ def create_app():
     # Enregistrement des blueprints
     app.register_blueprint(activites_bp)
     app.register_blueprint(auth)
+    app.register_blueprint(main_bp)
 
     # Création des tables
     with app.app_context():
