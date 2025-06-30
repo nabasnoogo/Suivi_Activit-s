@@ -9,7 +9,7 @@ import os
 from weasyprint import HTML
 from flask_login import login_required
 
-# Création du blueprint pour les activités
+# Création du blueprint pour les activités f
 activites_bp = Blueprint('activites', __name__, url_prefix='/activites')
 
 # ROUTE 1 : Liste des activités (sans filtrage)
