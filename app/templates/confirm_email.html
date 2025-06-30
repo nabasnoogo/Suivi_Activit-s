@@ -2,14 +2,42 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Confirmation de votre compte</title>
+  <title>Action requise - Suivi Activités</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-ENjdO4Dr2bkBIFxQpeoDnz+E+Q5DdCyCkUx1u5c5z3zE5VgP0Qur9C4pF0W5DoaI"
+    crossorigin="anonymous"
+  />
 </head>
-<body>
-  <p>Bonjour,</p>
-  <p>Merci de vous être inscrit sur notre site. Pour activer votre compte, veuillez confirmer votre adresse e-mail en cliquant sur le lien ci-dessous :</p>
-  <p><a href="{{ confirm_url }}">Confirmer mon compte</a></p>
-  <p>Si vous n'avez pas fait cette demande, vous pouvez ignorer cet e-mail en toute sécurité.</p>
-  <hr />
-  <p>Cordialement,<br>L'équipe Suivi Activités</p>
+<body style="background-color: #f8f9fa;">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title mb-4 text-center">Bonjour,</h3>
+            <p class="card-text">
+              Merci de vous être inscrit sur notre site <strong>Suivi Activités</strong>.<br>
+              Pour activer votre compte ou réinitialiser votre mot de passe, veuillez cliquer sur le lien ci-dessous :
+            </p>
+
+            <div class="text-center my-4">
+              <a href="{{ confirm_url }}" class="btn btn-primary btn-lg">Accéder au lien sécurisé</a>
+            </div>
+
+            <p class="text-muted">
+              Si vous n'avez pas fait cette demande, vous pouvez ignorer cet e-mail en toute sécurité.
+            </p>
+
+            <hr />
+            <p class="text-center text-secondary small mb-0">
+              &copy; {{ current_year or "2025" }} Suivi Activités — Tous droits réservés DSI/SRS/MEEA.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

@@ -3,20 +3,19 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required, current_user
 from ..models.user import User
 from ..extensions import db, login_manager, mail
-from ..forms.auth_forms import RegisterForm, LoginForm
+from ..forms.auth_forms import RegisterForm, LoginForm, RequestResetForm, ResetPasswordForm
 from ..utils.token import generate_confirmation_token, confirm_token
 from flask_mail import Message
 from functools import wraps
 
 auth = Blueprint('auth', __name__)
 
-# --- User loader ---
+# === User loader ===
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-
-# --- Décorateur pour exiger confirmation email ---
+# === Décorateur pour confirmation e-mail ===
 def email_confirmed_required(view_function):
     @wraps(view_function)
     def decorated_view(*args, **kwargs):
@@ -28,15 +27,10 @@ def email_confirmed_required(view_function):
         return view_function(*args, **kwargs)
     return decorated_view
 
-
-# --- Route d'inscription ---
+# === Inscription ===
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
-    print(f"[DEBUG] Requête : {request.method}")
-    print(f"[DEBUG] Form valid ? {form.validate_on_submit()}")
-    print(f"[DEBUG] Errors : {form.errors}")
-
     if form.validate_on_submit():
         email = form.email.data
         password = generate_password_hash(form.password.data)
@@ -49,13 +43,8 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        print("[DEBUG] SECURITY_PASSWORD_SALT =", current_app.config.get('SECURITY_PASSWORD_SALT'))
         token = generate_confirmation_token(user.email)
         confirm_url = url_for('auth.confirm_email', token=token, _external=True)
-
-        print(f"[DEBUG] URL de confirmation : {confirm_url}")
-        flash(f"Copiez ce lien pour confirmer manuellement : {confirm_url}", "warning")
-
         html = render_template('confirm_email.html', confirm_url=confirm_url)
         subject = "Confirmation de votre compte"
 
@@ -67,33 +56,29 @@ def register():
             print(f"[ERREUR ENVOI EMAIL] {e}")
 
         return redirect(url_for('auth.login'))
-
-    else:
-        if request.method == 'POST':
-            flash("Veuillez corriger les erreurs dans le formulaire.", "danger")
+    elif request.method == 'POST':
+        flash("Veuillez corriger les erreurs dans le formulaire.", "danger")
 
     return render_template('register.html', form=form)
 
-
-# --- Route de confirmation ---
+# === Confirmation de l'e-mail ===
 @auth.route('/confirm/<token>')
 def confirm_email(token):
     email = confirm_token(token)
     if not email:
-        flash('Le lien de confirmation est invalide ou a expiré.', 'danger')
+        flash("Le lien de confirmation est invalide ou a expiré.", "danger")
         return redirect(url_for('auth.login'))
 
     user = User.query.filter_by(email=email).first_or_404()
     if user.is_confirmed:
-        flash('Compte déjà confirmé.', 'info')
+        flash("Compte déjà confirmé.", "info")
     else:
         user.is_confirmed = True
         db.session.commit()
-        flash('Compte confirmé avec succès !', 'success')
+        flash("Compte confirmé avec succès !", "success")
     return redirect(url_for('auth.login'))
 
-
-# --- Route de connexion ---
+# === Connexion ===
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -108,13 +93,12 @@ def login():
             return redirect(url_for('activites.list_activites'))
         else:
             flash("Email ou mot de passe incorrect", "danger")
-    else:
-        if request.method == 'POST':
-            flash("Veuillez corriger les erreurs dans le formulaire.", "danger")
+    elif request.method == 'POST':
+        flash("Veuillez corriger les erreurs dans le formulaire.", "danger")
+
     return render_template('login.html', form=form)
 
-
-# --- Route pour les utilisateurs non confirmés ---
+# === Utilisateur non confirmé ===
 @auth.route('/unconfirmed')
 @login_required
 def unconfirmed():
@@ -123,8 +107,7 @@ def unconfirmed():
     flash("Vous devez confirmer votre e-mail pour accéder à cette application.", "warning")
     return render_template('unconfirmed.html')
 
-
-# --- Route de déconnexion ---
+# === Déconnexion ===
 @auth.route('/logout')
 @login_required
 def logout():
@@ -132,8 +115,7 @@ def logout():
     flash("Déconnecté avec succès", "info")
     return redirect(url_for('auth.login'))
 
-
-# --- Fonction d’envoi de mail ---
+# === Fonction générique d'envoi d'e-mail ===
 def send_email(to, subject, html):
     try:
         msg = Message(subject, recipients=[to], html=html)
@@ -144,3 +126,51 @@ def send_email(to, subject, html):
         print("[SIMULÉ] Contenu HTML :")
         print(html)
         print(f"[SIMULÉ] Erreur : {e}")
+
+# === Réinitialisation : demande de lien ===
+@auth.route('/reset_password', methods=['GET', 'POST'])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('activites.list_activites'))
+
+    form = RequestResetForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            send_reset_email(user)
+        flash("Si l'adresse existe, un lien de réinitialisation a été envoyé.", "info")
+        return redirect(url_for('auth.login'))
+
+    return render_template('reset_request.html', form=form)
+
+# === Réinitialisation : envoi du mail avec token ===
+def send_reset_email(user):
+    token = user.generate_reset_token()
+    reset_url = url_for('auth.reset_token', token=token, _external=True)
+    html = render_template('confirm_email.html', confirm_url=reset_url)
+    subject = "Réinitialisation de votre mot de passe"
+
+    try:
+        send_email(user.email, subject, html)
+    except Exception as e:
+        print("[ERREUR ENVOI EMAIL - RESET] ", e)
+
+# === Réinitialisation : via le lien ===
+@auth.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('activites.list_activites'))
+
+    user = User.verify_reset_token(token)
+    if not user:
+        flash("Le lien est invalide ou a expiré.", "danger")
+        return redirect(url_for('auth.reset_request'))
+
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user.password = generate_password_hash(form.password.data)
+        db.session.commit()
+        flash("Votre mot de passe a été réinitialisé avec succès.", "success")
+        return redirect(url_for('auth.login'))
+
+    return render_template('reset_token.html', form=form)
