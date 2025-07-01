@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Tableau de bord Admin{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2 class="mb-4">Tableau de bord Admin</h2>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover table-striped align-middle">
+      <thead class="table-primary text-center">
+        <tr>
+          <th>ID</th>
+          <th>Email</th>
+          <th>Confirmé</th>
+          <th>Admin</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td class="text-center">{{ user.id }}</td>
+          <td>{{ user.email }}</td>
+          <td class="text-center">
+            {% if user.is_confirmed %}
+              <span class="badge bg-success">Oui</span>
+            {% else %}
+              <span class="badge bg-danger">Non</span>
+            {% endif %}
+          </td>
+          <td class="text-center">
+            {% if user.is_admin %}
+              <span class="badge bg-primary">Oui</span>
+            {% else %}
+              <span class="badge bg-secondary">Non</span>
+            {% endif %}
+          </td>
+          <td class="text-center">
+            <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" class="btn btn-sm btn-warning">
+              Modifier
+            </a>
+            {% if not user.is_admin %}
+              <form action="{{ url_for('admin.delete_user', user_id=user.id) }}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Confirmer la suppression ?')">
+                  Supprimer
+                </button>
+              </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

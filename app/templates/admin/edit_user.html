@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Modifier l'utilisateur {{ user.email }}</h1>
+
+<form method="POST">
+  <label>
+    <input type="checkbox" name="is_confirmed" {% if user.is_confirmed %}checked{% endif %}>
+    Confirmé
+  </label><br>
+  <label>
+    <input type="checkbox" name="is_admin" {% if user.is_admin %}checked{% endif %}>
+    Administrateur
+  </label><br><br>
+  <button type="submit">Enregistrer</button>
+  <a href="{{ url_for('admin.dashboard') }}">Annuler</a>
+</form>
+
+{% endblock %}
