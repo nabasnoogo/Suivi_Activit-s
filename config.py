@@ -3,7 +3,7 @@
 SECRET_KEY = 'une_clé_secrète'
 SECURITY_PASSWORD_SALT = 'sel_unique'
 
-SQLALCHEMY_DATABASE_URI = 'sqlite:///suivi_activites.db'
+SQLALCHEMY_DATABASE_URI = 'postgresql://suivi_user:6E5yKItPvmJNHOg4UwjN6EGNf6SlRf8H@dpg-d1j6g1ur433s73ftp56g-a.oregon-postgres.render.com/suiviactivites'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 MAIL_SERVER = 'smtp.gmail.com'
