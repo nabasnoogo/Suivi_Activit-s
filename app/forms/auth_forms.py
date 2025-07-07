@@ -35,6 +35,11 @@ class RegisterForm(FlaskForm):
     ])
     submit = SubmitField("S'inscrire")
 
+    # Validation personnalisée pour les adresses e-mail
+    def validate_email(self, field):
+        if not field.data.lower().endswith('.gov.bf'):
+            raise ValidationError("Seules les adresses se terminant par .gov.bf sont autorisées.")
+
 # --- Formulaire de connexion ---
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
