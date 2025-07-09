@@ -56,8 +56,6 @@ def register():
             print(f"[ERREUR ENVOI EMAIL] {e}")
 
         return redirect(url_for('auth.login'))
-  #  elif request.method == 'POST':
-  #      flash("Veuillez corriger les erreurs dans le formulaire.", "danger")
 
     return render_template('register.html', form=form)
 

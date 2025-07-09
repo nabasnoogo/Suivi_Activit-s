@@ -36,7 +36,6 @@ def delete_user(user_id):
     flash("Utilisateur supprimé.", "success")
     return redirect(url_for('admin.dashboard'))
 
-# Exemple simple d'édition utilisateur (juste confirmation email ici)
 @admin_bp.route('/edit_user/<int:user_id>', methods=['GET', 'POST'])
 @login_required
 @admin_required

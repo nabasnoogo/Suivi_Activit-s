@@ -131,7 +131,7 @@ def rapport_pdf():
     mois = request.values.get('mois', type=int)
     annee = request.values.get('annee', type=int)
     structure = request.values.get('structure', type=str)
-    action = request.form.get('action')  # 'afficher' ou 'telecharger'
+    action = request.form.get('action') 
 
     if mois and not annee:
         annee = datetime.utcnow().year

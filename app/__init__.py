@@ -9,7 +9,7 @@ def create_app():
     app = Flask(__name__)
 
     # Charger la configuration depuis config.py
-    app.config.from_object('config')  # Correct !
+    app.config.from_object('config')  
 
     # Initialisation des extensions
     db.init_app(app)
@@ -24,9 +24,9 @@ def create_app():
     app.register_blueprint(activites_bp)
     app.register_blueprint(auth)
     app.register_blueprint(main_bp)
-    app.register_blueprint(admin_bp)  # <-- Enregistrement blueprint admin
+    app.register_blueprint(admin_bp)  
 
-    # Création des tables
+   
     with app.app_context():
         db.create_all()
 
