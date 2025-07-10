@@ -4,7 +4,7 @@ SECRET_KEY = 'une_clé_secrète'
 SECURITY_PASSWORD_SALT = 'sel_unique'
 
 #SQLALCHEMY_DATABASE_URI = 'postgresql://suivi_user:6E5yKItPvmJNHOg4UwjN6EGNf6SlRf8H@dpg-d1j6g1ur433s73ftp56g-a.oregon-postgres.render.com/suiviactivites'
-SQLALCHEMY_DATABASE_URI = 'postgresql://suivi_user:Suivi%401@10.7.5.29:5432/suivi_activites'
+SQLALCHEMY_DATABASE_URI = 'postgresql://suivi_user:Suivi%401@10.7.5.179:5432/suivi_activites'
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
